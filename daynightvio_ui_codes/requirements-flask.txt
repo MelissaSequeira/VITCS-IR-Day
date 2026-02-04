@@ -1,0 +1,8 @@
+# Flask UI stack (use with existing project deps)
+flask>=2.0.0
+
+# Existing dependencies (keep these from your env)
+opencv-python>=4.5.0
+numpy>=1.19.0
+ultralytics>=8.0.0
+roboflow>=1.1.0

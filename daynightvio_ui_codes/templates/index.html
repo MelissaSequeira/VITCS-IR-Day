@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-messages">
+      {% for category, msg in messages %}
+        <p class="flash {{ category }}">{{ msg }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+<p class="subtitle">Upload an image or video to detect helmetless riders and overloading.</p>
+
+<form id="main-form" method="post" enctype="multipart/form-data" action="">
+    <div class="form-group">
+        <label for="model">Model</label>
+        <select name="model" id="model">
+            <option value="yolo">YOLO (Ultralytics)</option>
+            <option value="roboflow">Roboflow (Strict)</option>
+        </select>
+    </div>
+
+    <div class="form-group" id="conf-group">
+        <label for="confidence">Confidence threshold</label>
+        <input type="range" name="confidence" id="confidence" min="0.1" max="1" step="0.01" value="0.25">
+        <span id="conf-value">0.25</span>
+    </div>
+
+    <div class="form-group">
+        <label>Input type</label>
+        <div class="radio-group">
+            <label><input type="radio" name="input_type" value="image" checked> Image</label>
+            <label><input type="radio" name="input_type" value="video"> Video</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="file">File</label>
+        <input type="file" name="file" id="file" accept=".jpg,.jpeg,.png,.mp4,.avi,.mov" required>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" id="submit-btn">Process</button>
+    </div>
+</form>
+
+<script>
+(function () {
+    var form = document.getElementById('main-form');
+    var inputType = document.querySelectorAll('input[name="input_type"]');
+    var fileInput = document.getElementById('file');
+    var conf = document.getElementById('confidence');
+    var confValue = document.getElementById('conf-value');
+
+    conf.addEventListener('input', function () { confValue.textContent = conf.value; });
+
+    function updateAccept() {
+        var isImage = document.querySelector('input[name="input_type"]:checked').value === 'image';
+        fileInput.accept = isImage ? '.jpg,.jpeg,.png' : '.mp4,.avi,.mov';
+    }
+    inputType.forEach(function (r) { r.addEventListener('change', updateAccept); });
+    updateAccept();
+
+    form.addEventListener('submit', function (e) {
+        var isImage = document.querySelector('input[name="input_type"]:checked').value === 'image';
+        form.action = isImage ? '{{ url_for("process_image") }}' : '{{ url_for("process_video") }}';
+    });
+})();
+</script>
+{% endblock %}
