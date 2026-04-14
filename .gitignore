@@ -1,0 +1,10 @@
+.venv
+yolovenv
+yolov8n.pt
+yolov10s.pt
+violation_integration/models
+violation_integration/database.db
+violation_integration/temp_video.mp4
+violation_integration/temp.mp4
+violation_integration/yolov8n.pt
+violation_integration/static
