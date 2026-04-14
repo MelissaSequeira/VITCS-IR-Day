@@ -1,0 +1,187 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violation Detection</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-deep: #050814;
+            --bg-card: #0b1120;
+            --border-blue: rgba(56, 189, 248, 0.2);
+            --neon-blue: #38bdf8;
+            --neon-green: #34d399;
+            --neon-purple: #c084fc;
+            --text-main: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .header {
+            text-align: center;
+            padding: 25px;
+            border-bottom: 1px solid var(--border-blue);
+        }
+
+        .header h2 {
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .custom-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-blue);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .upload-box {
+            border: 2px dashed var(--neon-purple);
+            padding: 30px;
+            text-align: center;
+            border-radius: 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-box:hover {
+            background: rgba(192, 132, 252, 0.1);
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0; left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .btn-process {
+            margin-top: 15px;
+            background: linear-gradient(45deg, #7e22ce, #c084fc);
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .result-img {
+            width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid var(--border-blue);
+        }
+
+        .plate-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.4rem;
+            color: var(--neon-green);
+        }
+
+        .status {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .violation {
+            color: red;
+        }
+
+        .no-violation {
+            color: var(--neon-green);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h2>🚨 Violation Detection System</h2>
+</div>
+
+<div class="container mt-4">
+
+    <!-- Upload -->
+    <div class="custom-card mb-4">
+        <form method="POST" enctype="multipart/form-data">
+            <div class="upload-box">
+                <p>Click or Drag Image for Violation Detection</p>
+                <input type="file" name="file" class="file-input" required>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn-process">Detect Violation</button>
+            </div>
+        </form>
+    </div>
+
+    {% if result_img %}
+
+    <!-- Result Image -->
+    <div class="custom-card mb-4 text-center">
+        <h5 style="color: var(--neon-blue);">Detection Result</h5>
+        <img src="{{ url_for('static', filename='uploads/' + result_img) }}" class="result-img">
+    </div>
+
+    <!-- Original + Enhanced in ONE ROW -->
+    <div class="row mb-4">
+
+        <div class="col-md-6">
+            <div class="custom-card text-center">
+                <h5 style="color: var(--neon-blue);">Original Image</h5>
+                <img src="{{ url_for('static', filename='uploads/' + original_img) }}" class="result-img">
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="custom-card text-center">
+                <h5 style="color: var(--neon-purple);">Enhanced Image</h5>
+                <img src="{{ url_for('static', filename='uploads/' + enhanced_img) }}" class="result-img">
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Plate Info -->
+    <div class="custom-card text-center">
+        <p class="status">
+            {% if violation %}
+                <span class="violation">🚫 Violation Detected (No Helmet)</span>
+            {% else %}
+                <span class="no-violation">✅ No Violation</span>
+            {% endif %}
+        </p>
+
+        <p class="plate-text">
+            Plate: {{ plate_text }}
+        </p>
+
+        {% if crop_name != "None" %}
+        <img src="{{ url_for('static', filename='uploads/' + crop_name) }}" 
+             style="max-height:150px; border:1px solid var(--border-blue); border-radius:6px;">
+        {% endif %}
+    </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

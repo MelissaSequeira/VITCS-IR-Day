@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Traffic & ANPR Intelligence</title>
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-deep: #050814;
+            --bg-card: #0b1120;
+            --border-blue: rgba(56, 189, 248, 0.2);
+            --neon-blue: #38bdf8;
+            --neon-green: #34d399;
+            --neon-purple: #c084fc;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+            background-image: radial-gradient(circle at 50% 0%, #1e3a8a 0%, transparent 40%);
+            background-repeat: no-repeat;
+            min-height: 100vh;
+        }
+
+        /* Dashboard Header */
+        .dashboard-header {
+            padding: 30px 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-blue);
+            background: rgba(11, 17, 32, 0.6);
+            backdrop-filter: blur(10px);
+        }
+
+        .dashboard-header h2 {
+            font-weight: 700;
+            background: linear-gradient(90deg, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        /* Cards */
+        .custom-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-blue);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            height: 100%;
+        }
+
+        /* File Upload Areas */
+        .upload-area {
+            border: 2px dashed var(--neon-blue);
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            background: rgba(56, 189, 248, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .upload-area.video-mode {
+            border-color: var(--neon-purple);
+            background: rgba(192, 132, 252, 0.05);
+        }
+
+        .upload-area:hover {
+            background: rgba(56, 189, 248, 0.1);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
+        }
+        .upload-area.video-mode:hover {
+            background: rgba(192, 132, 252, 0.1);
+            box-shadow: 0 0 15px rgba(192, 132, 252, 0.3);
+        }
+
+        .upload-area i {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .img-icon { color: var(--neon-blue); }
+        .vid-icon { color: var(--neon-purple); }
+
+        .file-input {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            opacity: 0; cursor: pointer;
+        }
+
+        .btn-process {
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 10px 25px;
+            border-radius: 8px;
+            transition: 0.3s;
+        }
+        .btn-img {
+            background: linear-gradient(45deg, #0284c7, #38bdf8);
+            box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+        }
+        .btn-vid {
+            background: linear-gradient(45deg, #7e22ce, #c084fc);
+            box-shadow: 0 4px 15px rgba(192, 132, 252, 0.4);
+        }
+        .btn-process:hover { transform: translateY(-2px); color: white; }
+
+        /* Table Styling */
+        .table {
+            color: var(--text-main);
+            border-collapse: separate;
+            border-spacing: 0 10px;
+            margin-top: -10px;
+        }
+
+        .table thead th {
+            border-bottom: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+        }
+
+        .table tbody tr { background: rgba(255, 255, 255, 0.02); transition: all 0.2s ease; }
+        .table tbody tr:hover { background: rgba(56, 189, 248, 0.08); transform: scale(1.01); }
+
+        .table td { border-top: 1px solid var(--border-blue); border-bottom: 1px solid var(--border-blue); vertical-align: middle; }
+        .table td:first-child { border-left: 1px solid var(--border-blue); border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+        .table td:last-child { border-right: 1px solid var(--border-blue); border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+
+        /* Image Styling */
+        .img-thumbnail-custom {
+            border-radius: 6px;
+            border: 1px solid var(--border-blue);
+            transition: transform 0.3s;
+            object-fit: cover;
+        }
+        .img-thumbnail-custom:hover {
+            transform: scale(1.5);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.5);
+            z-index: 10; position: relative;
+        }
+
+        /* Number Plate Font */
+        .plate-text {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.3rem;
+            color: var(--neon-green);
+            text-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
+            letter-spacing: 2px;
+        }
+
+        /* Loaders */
+        .loader-box { display: none; margin-top: 15px; }
+        .spinner-img { color: var(--neon-blue); }
+        .spinner-vid { color: var(--neon-purple); }
+
+        /* Badges */
+        .badge-img { background: rgba(56, 189, 248, 0.2); color: var(--neon-blue); border: 1px solid var(--neon-blue); }
+        .badge-vid { background: rgba(192, 132, 252, 0.2); color: var(--neon-purple); border: 1px solid var(--neon-purple); }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="container">
+            <h2><i class="fa-solid fa-microchip me-2"></i> Unified ANPR Intelligence Hub</h2>
+            <p class="text-muted mb-0">Select your processing mode below to extract high-accuracy license plates.</p>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <div class="row g-4 mb-5">
+            <!-- OPTION 1: IMAGE UPLOAD -->
+            <div class="col-md-6">
+                <div class="custom-card p-4">
+                    <h5 class="mb-4 text-center text-info"><i class="fa-solid fa-image me-2"></i> Single Image Analysis</h5>
+                    
+                    <form action="/upload_image" method="post" enctype="multipart/form-data" onsubmit="showLoader('img-loader')">
+                        <div class="upload-area mx-auto">
+                            <i class="fa-solid fa-camera img-icon"></i>
+                            <h6 id="img-label" class="mt-2 text-white">Upload Vehicle Image</h6>
+                            <p class="text-muted small mb-0">Supports JPG, PNG, WEBP</p>
+                            <input type="file" name="file" class="file-input" accept="image/*" onchange="updateName(this, 'img-label')" required>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-process btn-img px-4 py-2">
+                                <i class="fa-solid fa-bolt me-2"></i> Run Image AI
+                            </button>
+                        </div>
+
+                        <div id="img-loader" class="loader-box text-center">
+                            <div class="spinner-grow spinner-grow-sm spinner-img me-1" role="status"></div>
+                            <div class="spinner-grow spinner-grow-sm spinner-img me-1" style="animation-delay: 0.1s" role="status"></div>
+                            <span class="text-info fw-bold ms-2">Enhancing Image & Running OCR...</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- OPTION 2: VIDEO UPLOAD -->
+            <div class="col-md-6">
+                <div class="custom-card p-4">
+                    <h5 class="mb-4 text-center" style="color: var(--neon-purple);"><i class="fa-solid fa-video me-2"></i> Live Video Tracking</h5>
+                    
+                    <form action="/upload_video" method="post" enctype="multipart/form-data" onsubmit="showLoader('vid-loader')">
+                        <div class="upload-area video-mode mx-auto">
+                            <i class="fa-solid fa-film vid-icon"></i>
+                            <h6 id="vid-label" class="mt-2 text-white">Upload CCTV Video</h6>
+                            <p class="text-muted small mb-0">Supports MP4, AVI, MKV</p>
+                            <input type="file" name="file" class="file-input" accept="video/*" onchange="updateName(this, 'vid-label')" required>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-process btn-vid px-4 py-2">
+                                <i class="fa-solid fa-satellite-dish me-2"></i> Start Video Tracker
+                            </button>
+                        </div>
+
+                        <div id="vid-loader" class="loader-box text-center">
+                            <div class="spinner-grow spinner-grow-sm spinner-vid me-1" role="status"></div>
+                            <div class="spinner-grow spinner-grow-sm spinner-vid me-1" style="animation-delay: 0.1s" role="status"></div>
+                            <span class="fw-bold ms-2" style="color: var(--neon-purple);">Tracking frames... This takes a moment.</span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table Section -->
+        <div class="custom-card p-4 mb-5">
+            <h4 class="mb-4"><i class="fa-solid fa-database me-2" style="color: var(--neon-blue);"></i> Central Database Registry</h4>
+            
+            <div class="table-responsive">
+                <table class="table text-center">
+                    <thead>
+                        <tr>
+                            <th>Rec ID</th>
+                            <th>Source / Track</th>
+                            <th>Vehicle View</th>
+                            <th>Cropped Plate</th>
+                            <th>AI Output</th>
+                            <th>Timestamp</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data %}
+                        <tr>
+                            <td class="text-muted">#{{ row[0] }}</td>
+                            
+                            <!-- Source Type & ID -->
+                            <td>
+                                {% if row[1] == 'Image' %}
+                                    <span class="badge badge-img"><i class="fa-solid fa-image me-1"></i> Static Image</span>
+                                {% else %}
+                                    <span class="badge badge-vid"><i class="fa-solid fa-video me-1"></i> {{ row[2] }}</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Vehicle Image -->
+                            <td>
+                                {% if row[3] != 'None' %}
+                                <a href="{{ url_for('static', filename='uploads/' + row[3]) }}" target="_blank">
+                                    <img src="{{ url_for('static', filename='uploads/' + row[3]) }}" height="60" class="img-thumbnail-custom">
+                                </a>
+                                {% else %} <span class="text-muted">N/A</span> {% endif %}
+                            </td>
+                            
+                            <!-- Plate Image -->
+                            <td>
+                                {% if row[4] != 'None' %}
+                                <a href="{{ url_for('static', filename='uploads/' + row[4]) }}" target="_blank">
+                                    <img src="{{ url_for('static', filename='uploads/' + row[4]) }}" height="35" class="img-thumbnail-custom">
+                                </a>
+                                {% else %} <span class="text-muted">Not Found</span> {% endif %}
+                            </td>
+                            
+                            <!-- OCR Result -->
+                            <td>
+                                {% if row[5] == 'Not Detected' %}
+                                    <span class="text-danger fw-bold"><i class="fa-solid fa-circle-xmark"></i> Failed</span>
+                                {% else %}
+                                    <span class="plate-text">{{ row[5] }}</span>
+                                {% endif %}
+                            </td>
+                            
+                            <!-- Date & Time -->
+                            <td>
+                                <div><i class="fa-regular fa-calendar me-1 text-muted"></i> {{ row[6] }}</div>
+                                <div class="small text-muted"><i class="fa-regular fa-clock me-1"></i> {{ row[7] }}</div>
+                            </td>
+                            
+                            <!-- Delete -->
+                            <td>
+                                <a href="/delete/{{ row[0] }}" class="btn btn-sm btn-outline-danger px-3 rounded-pill">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="py-5">
+                                <i class="fa-solid fa-folder-open fs-2 text-muted mb-3 d-block"></i>
+                                <span class="text-muted">No records found. Upload an image or video above to begin.</span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function updateName(input, labelId) {
+            const label = document.getElementById(labelId);
+            if (input.files && input.files[0]) {
+                label.innerHTML = `<i class="fa-solid fa-check text-success"></i> ${input.files[0].name}`;
+            }
+        }
+
+        function showLoader(loaderId) {
+            document.getElementById(loaderId).style.display = 'block';
+        }
+    </script>
+</body>
+</html>

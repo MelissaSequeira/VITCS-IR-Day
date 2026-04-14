@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>ANPR Dashboard</title>
+
+<style>
+    .violation-row {
+        background-color: #ffcccc; /* red */
+    }
+    .normal-row {
+        background-color: #ccffcc; /* green */
+    }
+    img {
+        border-radius: 5px;
+    }
+</style>
+
+</head>
+
+<body>
+
+<h2>Detected Vehicles</h2>
+
+<table border="1">
+
+<tr>
+<th>Source</th>
+<th>Vehicle ID</th>
+<th>Vehicle</th>
+<th>Plate</th>
+<th>OCR Text</th>
+<th>Timestamp</th>
+</tr>
+
+{% for row in data %}
+
+<tr class="{% if row[8] == 'Yes' %}violation-row{% else %}normal-row{% endif %}">
+
+    <!-- SOURCE -->
+    <td>
+        {% if row[1] == 'Image' %}
+            📷 Image
+        {% elif row[1] == 'Video' %}
+            🎥 Video
+        {% else %}
+            Unknown
+        {% endif %}
+    </td>
+
+    <!-- VEHICLE ID -->
+    <td>{{ row[2] }}</td>
+
+    <!-- VEHICLE IMAGE (AUTO FIX PATH) -->
+    <td>
+        {% if row[3] and row[3] != 'None' %}
+            <a href="{{ url_for('static', filename='violations/' + row[3]) }}" target="_blank">
+                <img src="{{ url_for('static', filename='violations/' + row[3]) }}"
+                     height="100"
+                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='uploads/' + row[3]) }}';">
+            </a>
+        {% else %}
+            No Image
+        {% endif %}
+    </td>
+
+    <!-- PLATE IMAGE -->
+    <td>
+        {% if row[4] and row[4] != "None" %}
+            <img src="{{ url_for('static', filename='uploads/' + row[4]) }}" height="60">
+        {% else %}
+            No Plate
+        {% endif %}
+    </td>
+
+    <!-- OCR -->
+    <td>{{ row[5] }}</td>
+
+    <!-- TIME -->
+    <td>{{ row[6] }} {{ row[7] }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html><!DOCTYPE html>
+<html>
+
+<head>
+<title>ANPR Dashboard</title>
+
+<style>
+    .violation-row {
+        background-color: #ffcccc; /* red */
+    }
+    .normal-row {
+        background-color: #ccffcc; /* green */
+    }
+    img {
+        border-radius: 5px;
+    }
+</style>
+
+</head>
+
+<body>
+
+<h2>Detected Vehicles</h2>
+
+<table border="1">
+
+<tr>
+<th>Source</th>
+<th>Vehicle ID</th>
+<th>Vehicle</th>
+<th>Plate</th>
+<th>OCR Text</th>
+<th>Timestamp</th>
+</tr>
+
+{% for row in data %}
+
+<tr class="{% if row[8] == 'Yes' %}violation-row{% else %}normal-row{% endif %}">
+
+    <!-- SOURCE -->
+    <td>
+        {% if row[1] == 'Image' %}
+            📷 Image
+        {% elif row[1] == 'Video' %}
+            🎥 Video
+        {% else %}
+            Unknown
+        {% endif %}
+    </td>
+
+    <!-- VEHICLE ID -->
+    <td>{{ row[2] }}</td>
+
+    <!-- VEHICLE IMAGE (AUTO FIX PATH) -->
+    <td>
+        {% if row[3] and row[3] != 'None' %}
+            <a href="{{ url_for('static', filename='violations/' + row[3]) }}" target="_blank">
+                <img src="{{ url_for('static', filename='violations/' + row[3]) }}"
+                     height="100"
+                     onerror="this.onerror=null; this.src='{{ url_for('static', filename='uploads/' + row[3]) }}';">
+            </a>
+        {% else %}
+            No Image
+        {% endif %}
+    </td>
+
+    <!-- PLATE IMAGE -->
+    <td>
+        {% if row[4] and row[4] != "None" %}
+            <img src="{{ url_for('static', filename='uploads/' + row[4]) }}" height="60">
+        {% else %}
+            No Plate
+        {% endif %}
+    </td>
+
+    <!-- OCR -->
+    <td>{{ row[5] }}</td>
+
+    <!-- TIME -->
+    <td>{{ row[6] }} {{ row[7] }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html><!DOCTYPE html>
+<html>
+
+<head>
+<title>ANPR Dashboard</title>
+
+<style>
+    .violation-row {
+        background-color: #ffcccc; /* red */
+    }
+    .normal-row {
+        background-color: #ccffcc; /* green */
+    }
+    img {
+        border-radius: 5px;
+    }
+</style>
+
+</head>
+
+<body>
+
+<h2>Detected Vehicles</h2>
+
+<table border="1">
+
+<tr>
+<th>Source</th>
+<th>Vehicle ID</th>
+<th>Vehicle</th>
+<th>Plate</th>
+<th>OCR Text</th>
+<th>Timestamp</th>
+</tr>
+
+{% for row in data %}
+
+<tr class="{% if row[8] == 'Yes' %}violation-row{% else %}normal-row{% endif %}">
+
+    <!-- SOURCE -->
+    <td>
+        {% if row[1] == 'Image' %}
+            📷 Image
+        {% elif row[1] == 'Video' %}
+            🎥 Video
+        {% else %}
+            Unknown
+        {% endif %}
+    </td>
+
+    <!-- VEHICLE ID -->
+    <td>{{ row[2] }}</td>
+
+    <!-- VEHICLE IMAGE (AUTO FIX PATH) -->
+    <td>
+    {% if row[3] and row[3] != 'None' %}
+
+        {% if row[8] == 'Yes' %}
+            <!-- VIOLATION IMAGE -->
+            <a href="{{ url_for('static', filename='violations/' + row[3]) }}" target="_blank">
+                <img src="{{ url_for('static', filename='violations/' + row[3]) }}" height="100">
+            </a>
+        {% else %}
+            <!-- NORMAL IMAGE -->
+            <a href="{{ url_for('static', filename='uploads/' + row[3]) }}" target="_blank">
+                <img src="{{ url_for('static', filename='uploads/' + row[3]) }}" height="100">
+            </a>
+        {% endif %}
+
+    {% else %}
+        No Image
+    {% endif %}
+</td>
+
+    <!-- PLATE IMAGE -->
+    <td>
+        {% if row[4] and row[4] != "None" %}
+            <img src="{{ url_for('static', filename='uploads/' + row[4]) }}" height="60">
+        {% else %}
+            No Plate
+        {% endif %}
+    </td>
+
+    <!-- OCR -->
+    <td>{{ row[5] }}</td>
+
+    <!-- TIME -->
+    <td>{{ row[6] }} {{ row[7] }}</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</body>
+</html>
